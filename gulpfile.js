@@ -190,7 +190,7 @@ gulp.task('serve', function () {
 gulp.task('dev', function () {
 	//noinspection JSUnusedGlobalSymbols
 	connect.server({
-		root: 'dev',
+		root: config.paths.src,
 		port: 8080,
 		middleware: function (connect) {
 			return [
@@ -297,10 +297,24 @@ gulp.task('build-html', function () {
 });
 
 /**
+ * Copies assets not processed by the `build-*` tasks into `dist`.
+ */
+gulp.task('copy-assets', function () {
+	gulp.src(path.join(config.paths.src, '**/*'))
+		.pipe(filter([
+			'**/*.*', // *.* pattern excludes empty directories
+			'!' + config.filePatterns.html.all,
+			'!' + config.filePatterns.js.all,
+			'!' + config.filePatterns.less.all
+		]))
+		.pipe(gulp.dest(config.paths.dist));
+});
+
+/**
  * Performs a full build.
  */
 gulp.task('build', function (cb) {
-	sequence('clean', 'lint', 'test', ['build-js', 'build-less', 'build-deps'], 'build-html', cb);
+	sequence('clean', 'lint', 'test', ['build-js', 'build-less', 'build-deps'], ['build-html', 'copy-assets'], cb);
 });
 
 /**
