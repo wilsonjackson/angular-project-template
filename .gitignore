@@ -1,0 +1,12 @@
+# IDE files
+/*.iml
+/atlassian-ide-plugin.xml
+/.idea
+
+# Package manager directories
+node_modules
+bower_components
+
+# Build output
+/dist
+/rev
