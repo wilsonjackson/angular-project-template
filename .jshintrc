@@ -19,6 +19,7 @@
 	"smarttabs": true,
 	"globals": {
 		"angular": false,
+		"jasmine": false,
 		"inject": true,
 		"describe": false,
 		"it": false,

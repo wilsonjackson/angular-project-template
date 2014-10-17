@@ -1,11 +1,17 @@
+# Filesystem files
+.DS_Store
+
 # IDE files
-/*.iml
+*.iml
 /atlassian-ide-plugin.xml
 /.idea
 
 # Package manager directories
 node_modules
 bower_components
+
+# Local project stuff that's not for VCS
+/local
 
 # Build output
 /dist
