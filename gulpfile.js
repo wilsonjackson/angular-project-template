@@ -23,7 +23,8 @@ var bower = require('main-bower-files');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var less = require('gulp-less');
-var cssmin = require('gulp-minify-css');
+var autoprefixer = require('gulp-autoprefixer');
+var csso = require('gulp-csso');
 var rev = require('gulp-rev');
 var revCollector = require('gulp-rev-collector');
 var ngAnnotate = require('gulp-ng-annotate');
@@ -169,7 +170,8 @@ function cssResources(minify) {
 		// Filter out ignored files (that are locally @imported)
 		.pipe(filter(['**/*', '!' + config.filePatterns.less.excludes]))
 		.pipe(less())
-		.pipe(gIf(minify, cssmin()));
+		.pipe(autoprefixer())
+		.pipe(gIf(minify, csso()));
 }
 
 /**
