@@ -10,6 +10,7 @@
 
 'use strict';
 
+var ARGV = require('yargs').argv;
 var gulp = require('gulp');
 var sequence = require('run-sequence');
 var File = require('vinyl');
@@ -266,6 +267,10 @@ gulp.task('lint', function () {
  * Runs the unit test suite.
  */
 gulp.task('test', function (done) {
+	if (ARGV.skipTests) {
+		done();
+		return;
+	}
 	karma.start({
 		configFile: path.join(__dirname, 'karma.conf.js'),
 		singleRun: true
