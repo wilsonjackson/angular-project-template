@@ -50,15 +50,24 @@ var config = {
 		module: 'app'
 	},
 	/**
+	 * Server configuration.
+	 */
+	server: {
+		port: 8080,
+		devPort: 8080
+	},
+	/**
 	 * Paths to important directories used by the build.
 	 * 
 	 * All paths are relative to the root project directory, which is gulp's `cwd`. Do not include a './' prefix or a
 	 * trailing slash, as these paths are sometimes used as a component in `path.join()`.
 	 */
 	paths: {
-		// Main application sources. All resource types are mixed together in src, and are differentiated at build time
-		// using the file patterns below.
+		// Main application source root. All resource types are mixed together in src, and are differentiated at build
+		// time using the file patterns below.
 		src: 'src',
+		// Dev-only source root. See dev task definition for details on how this is used.
+		dev: 'dev',
 		// Target directory for built artifacts.
 		dist: 'dist',
 		// Used during a build to store mappings of revisioned filenames.
@@ -79,6 +88,9 @@ var config = {
 		js: {
 			all: '**/*.js',
 			tests: '**/*-spec.js'
+		},
+		css: {
+			all: '**/*.css'
 		},
 		less: {
 			all: '**/*.less',
@@ -142,7 +154,7 @@ function indexFile() {
  *
  * Included in the stream are the app's templates, compiled and loaded into angular's template cache.
  *
- * @param {boolean} minify Whether to minify the resources.
+ * @param {boolean} [minify] Whether to minify the resources (default false).
  * @return {stream.Readable}
  */
 function jsResources(minify) {
@@ -160,9 +172,27 @@ function jsResources(minify) {
 }
 
 /**
+ * Adds js resources from the dev source root to the main app's js resources.
+ *
+ * Dev resources are appended to the main resources, allowing them to piggyback on the main app and override/extend
+ * stuff easily.
+ *
+ * @param {boolean} [minify] Whether to minify the resources (default false).
+ * @return {stream.Readable}
+ */
+function devJsResources(minify) {
+	return es.merge(
+		jsResources(minify),
+		gulp.src(path.join(config.paths.dev, config.filePatterns.js.all))
+			// Filter out tests
+			.pipe(filter(['**/*', '!' + config.filePatterns.js.tests]))
+			.pipe(ngSort()));
+}
+
+/**
  * Creates a readable stream containing the app's css resources, compiled from less and optionally minified.
  *
- * @param {boolean} minify Whether to minify the resources.
+ * @param {boolean} [minify] Whether to minify the resources (default false).
  * @return {stream.Readable}
  */
 function cssResources(minify) {
@@ -182,31 +212,42 @@ function cssResources(minify) {
 gulp.task('serve', function () {
 	connect.server({
 		root: config.paths.dist,
-		port: 8080
+		port: config.server.port
 	});
 });
 
 /**
- * Launches a development server that dynamically serves all application components.
+ * Launches the development server.
+ *
+ * The `src` directory is used as the document root, so html, images and other resources are accessible at their
+ * expected URLs.
+ *
+ * The server will also dynamically concatenate javascript and less/css resources at request time, allowing real-time
+ * updates without requiring a build or a server restart (or even a watch).
+ *
+ * Additionally, the contents of the `dev` directory will be _overlaid_ on top of the document root, allowing specific
+ * paths to be masked with development versions, and any javascript resources in `dev` will be concatenated onto the
+ * end of the main js file, allowing the app's behavior to be augmented or extended for development purposes.
  */
 gulp.task('dev', function () {
 	//noinspection JSUnusedGlobalSymbols
 	connect.server({
 		root: config.paths.src,
-		port: 8080,
+		port: config.server.devPort,
 		middleware: function (connect) {
 			return [
 				connect().use(pipeline([
 					{url: '/' + config.outputFiles.app.index, pipeline: indexFile},
-					{url: '/' + config.outputFiles.app.js, pipeline: jsResources.bind(null, false)},
+					{url: '/' + config.outputFiles.app.js, pipeline: devJsResources.bind(null, false)},
 					{url: '/' + config.outputFiles.app.css, pipeline: cssResources.bind(null, false)},
 					{url: '/' + config.outputFiles.deps.js, pipeline: function () {
-						return gulp.src(bower()).pipe(filter('**/*.js'));
+						return gulp.src(bower()).pipe(filter(config.filePatterns.js.all));
 					}},
 					{url: '/' + config.outputFiles.deps.css, pipeline: function () {
-						return gulp.src(bower()).pipe(filter('**/*.css'));
+						return gulp.src(bower()).pipe(filter(config.filePatterns.css.all));
 					}}
-				]))
+				])),
+				connect().use(connect.static('dev'))
 			];
 		}
 	});
@@ -271,8 +312,8 @@ gulp.task('build-less', function () {
  * If there are any dependency files of types other than js or css, they'll be copied as-is to `dist`.
  */
 gulp.task('build-deps', function () {
-	var jsFilter = filter('**/*.js');
-	var cssFilter = filter('**/*.css');
+	var jsFilter = filter(config.filePatterns.js.all);
+	var cssFilter = filter(config.filePatterns.css.all);
 
 	// Base path must be specified explicitly or the process of including and excluding files via a filter results in
 	// absolute file paths being written to the rev manifest rather than relative ones.
