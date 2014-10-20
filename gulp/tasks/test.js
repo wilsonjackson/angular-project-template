@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Defines a task to run the test suite.
+ */
+
 'use strict';
 
 var ARGV = require('yargs').argv;

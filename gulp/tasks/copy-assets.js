@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Defines a task to copy non-buildable assets for production use.
+ */
+
 'use strict';
 
 var gulp = require('gulp');

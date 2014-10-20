@@ -1,10 +1,14 @@
+/**
+ * @fileoverview Defines a task to build production html assets.
+ */
+
 'use strict';
 
 var gulp = require('gulp');
 var path = require('path');
 var es = require('event-stream');
 var revCollector = require('gulp-rev-collector');
-var htmlResources = require('../resources/html-resources.js');
+var htmlAssets = require('../streams/html-assets.js');
 
 module.exports = function (config) {
 	return {
@@ -15,7 +19,7 @@ module.exports = function (config) {
 		 */
 		task: function () {
 			return es.merge(
-					htmlResources(config).getIndexFileStream(),
+					htmlAssets(config).getIndexFileStream(),
 					gulp.src(path.join(config.paths.rev, config.filePatterns.rev.all)))
 				.pipe(revCollector())
 				.pipe(gulp.dest(config.paths.dist));

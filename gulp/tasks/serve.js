@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Defines a task to launch a server using production assets.
+ */
+
 'use strict';
 
 var gulp = require('gulp');

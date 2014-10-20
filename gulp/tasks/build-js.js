@@ -1,9 +1,13 @@
+/**
+ * @fileoverview Defines a task to build production js assets.
+ */
+
 'use strict';
 
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var rev = require('gulp-rev');
-var jsResources = require('../resources/js-resources.js');
+var jsAssets = require('../streams/js-assets.js');
 
 module.exports = function (config) {
 	return {
@@ -13,7 +17,7 @@ module.exports = function (config) {
 		 * @return {stream.Readable}
 		 */
 		task: function () {
-			return jsResources(config).getResourceStream()
+			return jsAssets(config).getAssetStream()
 				.pipe(concat(config.outputFiles.app.js))
 				.pipe(rev())
 				.pipe(gulp.dest(config.paths.dist))

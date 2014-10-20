@@ -1,11 +1,14 @@
 /**
  * @fileoverview Standard build file for an AngularJS-based SPA.
  * 
- * Included in this file are tasks to build production assets, run tests, lint code, and run a development server. Read
- * the docblock for specific tasks for more information.
+ * This file hosts configuration for all gulp tasks. The contents of the configuration should be limited to what would
+ * normally be literals in the task definition (paths, urls, ports, etc.) and not anything behavior-related.
  *
- * Primary configuration is defined in the {@link config} global, which is also exported so that other modules may
- * leverage it.
+ * Behavior should be implemented directly in tasks, not controlled via flags and settings. (Edit things! This is just
+ * a template!) Tasks are defined in their own files in `gulp/tasks`.
+ *
+ * Configuration defined in this file is also exported to allow other node modules to import it (e.g., to share file
+ * path defintions with `karma.conf.js`).
  */
 
 'use strict';
@@ -43,7 +46,7 @@ var config = {
 	 * trailing slash, as these paths are sometimes used as a component in `path.join()`.
 	 */
 	paths: {
-		// Main application source root. All resource types are mixed together in src, and are differentiated at build
+		// Main application source root. All asset types are mixed together in src, and are differentiated at build
 		// time using the file patterns below.
 		src: 'src',
 		// Dev-only source root. See dev task definition for details on how this is used.
@@ -104,7 +107,6 @@ var config = {
 
 // If gulp is running, register tasks. Otherwise assume this file is being required by another script for its
 // exported config.
-//console.log(process.argv[1]);
 if (path.basename(process.argv[1]) === 'gulp') {
 	// All tasks are defined in 'gulp/tasks' and have a uniform structure: they export a function that takes the config
 	// object as its only argument and returns an object with a task definition and a 'register' method.

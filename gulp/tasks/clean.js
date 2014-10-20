@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Defines a task to delete build artifacts.
+ */
+
 'use strict';
 
 var gulp = require('gulp');

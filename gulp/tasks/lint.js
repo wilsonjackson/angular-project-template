@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Defines a task to lint js sources.
+ */
+
 'use strict';
 
 var gulp = require('gulp');

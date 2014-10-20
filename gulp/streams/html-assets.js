@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Creates streams of the project's html assets.
+ */
+
 'use strict';
 
 var gulp = require('gulp');
@@ -22,7 +26,7 @@ function fileRefs(/* ...files */) {
 module.exports = function (config) {
 	return {
 		/**
-		 * Creates a readable stream containing the app's index html with resource paths already injected.
+		 * Creates a readable stream containing the app's index html with asset paths already injected.
 		 *
 		 * @return {stream.Readable}
 		 */

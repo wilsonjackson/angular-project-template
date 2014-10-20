@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Defines a task to build production dependency assets.
+ */
+
 'use strict';
 
 var gulp = require('gulp');

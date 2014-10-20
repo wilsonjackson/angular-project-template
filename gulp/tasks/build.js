@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Defines a task to build the project and output production assets.
+ */
+
 'use strict';
 
 var gulp = require('gulp');
