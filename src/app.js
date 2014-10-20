@@ -1,5 +1,7 @@
-(function () {
-	'use strict';
+'use strict';
 
-	angular.module('app', []);
-})();
+var angular = require('angular');
+
+angular.module('app', [
+	require('./fish/module').name
+]);

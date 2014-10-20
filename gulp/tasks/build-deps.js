@@ -8,7 +8,7 @@ var gulp = require('gulp');
 var filter = require('gulp-filter');
 var concat = require('gulp-concat');
 var rev = require('gulp-rev');
-var bower = require('main-bower-files');
+var jsAssets = require('../streams/js-assets');
 
 module.exports = function (config) {
 	return {
@@ -28,7 +28,7 @@ module.exports = function (config) {
 
 			// Base path must be specified explicitly or the process of including and excluding files via a filter results in
 			// absolute file paths being written to the rev manifest rather than relative ones.
-			return gulp.src(bower(), {base: config.paths.bower})
+			return jsAssets(config).getDepsAssetStream()
 				.pipe(jsFilter)
 				.pipe(concat(config.outputFiles.deps.js))
 				.pipe(jsFilter.restore())

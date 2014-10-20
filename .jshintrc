@@ -18,8 +18,7 @@
 	"trailing": true,
 	"smarttabs": true,
 	"globals": {
-		"_": false,
-		"angular": false,
+		"_": true,
 		"jasmine": false,
 		"inject": true,
 		"describe": false,

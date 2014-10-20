@@ -14,6 +14,10 @@ var ngTemplates = require('gulp-angular-templatecache');
 var ngSort = require('gulp-angular-filesort');
 var uglify = require('gulp-uglify');
 var htmlAssets = require('./html-assets.js');
+var blibs = require('../../../browser-libs');
+var browserify = require('browserify');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
 
 module.exports = function (config) {
 	return {
@@ -26,10 +30,13 @@ module.exports = function (config) {
 		 * @return {stream.Readable}
 		 */
 		getAssetStream: function (minify) {
+			var bundler = browserify({basedir: config.project.basedir, excludeExternal: true});
+			bundler.add('./' + path.join(config.paths.src, config.filePatterns.js.entryPoint));
+
 			return es.merge(
-				gulp.src(path.join(config.paths.src, config.filePatterns.js.all))
-					// Filter out tests
-					.pipe(filter(['**/*', '!' + config.filePatterns.js.tests]))
+				bundler.bundle()
+					.pipe(source(config.outputFiles.app.js))
+					.pipe(buffer())
 					.pipe(ngAnnotate()),
 				htmlAssets(config).getTemplateStream()
 					.pipe(ngTemplates({module: config.project.module})))
@@ -53,6 +60,27 @@ module.exports = function (config) {
 					// Filter out tests
 					.pipe(filter(['**/*', '!' + config.filePatterns.js.tests]))
 					.pipe(ngSort()));
+		},
+
+		/**
+		 * Creates a readable stream containing the app's dependencies.
+		 *
+		 * @returns {stream.Readable}
+		 */
+		getDepsAssetStream: function () {
+			return es.readable(function () {
+				var self = this;
+				blibs(function (err, libs) {
+					if (err) {
+						return self.emit('error', err);
+					}
+					gulp.src(libs).pipe(es.through(function (file) {
+						self.emit('data', file);
+					}, function () {
+						self.emit('end');
+					}));
+				});
+			});
 		}
 	};
 };

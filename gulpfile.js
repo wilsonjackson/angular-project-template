@@ -70,6 +70,7 @@ var config = {
 		},
 		js: {
 			all: '**/*.js',
+			entryPoint: 'app.js',
 			tests: '**/*-spec.js'
 		},
 		css: {
