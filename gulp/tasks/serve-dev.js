@@ -60,12 +60,12 @@ module.exports = function (config) {
 		},
 
 		/**
-		 * Registers the `dev` task with gulp.
+		 * Registers the `serve-dev` task with gulp.
 		 *
-		 * @param {string} [name] Task name (default: 'dev')
+		 * @param {string} [name] Task name (default: 'serve-dev')
 		 */
 		register: function (name) {
-			gulp.task(name || 'dev', this.task);
+			gulp.task(name || 'serve-dev', this.task);
 		}
 	};
 };
