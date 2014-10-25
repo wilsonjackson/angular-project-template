@@ -17,7 +17,7 @@ module.exports = function (config) {
 		 * @return {stream.Readable}
 		 */
 		task: function () {
-			return jsAssets(config).getAssetStream()
+			return jsAssets(config).getAssetStream(true)
 				.pipe(concat(config.outputFiles.app.js))
 				.pipe(rev())
 				.pipe(gulp.dest(config.paths.dist))

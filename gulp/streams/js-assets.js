@@ -8,18 +8,45 @@ var gulp = require('gulp');
 var path = require('path');
 var es = require('event-stream');
 var gIf = require('gulp-if');
-var filter = require('gulp-filter');
 var ngAnnotate = require('gulp-ng-annotate');
-var ngTemplates = require('gulp-angular-templatecache');
-var ngSort = require('gulp-angular-filesort');
 var uglify = require('gulp-uglify');
-var htmlAssets = require('./html-assets.js');
 var blibs = require('../../../browser-libs');
 var browserify = require('browserify');
+var watchify = require('watchify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
+var _ = require('lodash');
 
 module.exports = function (config) {
+	var watchedBundler = null;
+
+	/**
+	 * Initializes a browserify bundler containing the main application sources.
+	 *
+	 * @param {object} args Arguments for browserify.
+	 * @returns {function(): stream.Readable}
+	 */
+	function createBundler(args) {
+		var bundler = browserify(_.assign({basedir: config.project.basedir, excludeExternal: true}, args || {}));
+		bundler.add('./' + path.join(config.paths.src, config.filePatterns.js.entryPoint));
+		return bundler;
+	}
+
+	/**
+	 * Processes a browserify bundle into a full js asset stream.
+	 *
+	 * @param {stream.Readable} bundle
+	 * @param {boolean} minify
+	 * @returns {stream.Readable}
+	 */
+	function bundleToAssetStream(bundle, minify) {
+		return bundle
+			.pipe(source(config.outputFiles.app.js))
+			.pipe(buffer())
+			.pipe(ngAnnotate())
+			.pipe(gIf(minify, uglify()));
+	}
+
 	return {
 		/**
 		 * Creates a readable stream containing the app's js assets, optionally minified.
@@ -30,18 +57,7 @@ module.exports = function (config) {
 		 * @return {stream.Readable}
 		 */
 		getAssetStream: function (minify) {
-			var bundler = browserify({basedir: config.project.basedir, excludeExternal: true});
-			bundler.add('./' + path.join(config.paths.src, config.filePatterns.js.entryPoint));
-
-			return es.merge(
-				bundler.bundle()
-					.pipe(source(config.outputFiles.app.js))
-					.pipe(buffer())
-					.pipe(ngAnnotate()),
-				htmlAssets(config).getTemplateStream()
-					.pipe(ngTemplates({module: config.project.module})))
-				.pipe(ngSort())
-				.pipe(gIf(minify, uglify()));
+			return bundleToAssetStream(createBundler().bundle(), minify);
 		},
 
 		/**
@@ -54,12 +70,12 @@ module.exports = function (config) {
 		 * @return {stream.Readable}
 		 */
 		getDevAssetStream: function (minify) {
-			return es.merge(
-				this.getAssetStream(minify),
-				gulp.src(path.join(config.paths.dev, config.filePatterns.js.all))
-					// Filter out tests
-					.pipe(filter(['**/*', '!' + config.filePatterns.js.tests]))
-					.pipe(ngSort()));
+			if (watchedBundler === null) {
+				var bundler = createBundler(watchify.args);
+				bundler.add('./' + path.join(config.paths.dev, config.filePatterns.js.devEntryPoint));
+				watchedBundler = watchify(bundler);
+			}
+			return bundleToAssetStream(watchedBundler.bundle(), minify);
 		},
 
 		/**

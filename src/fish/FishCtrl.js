@@ -4,10 +4,11 @@
  *
  * @ngInject
  * @param $scope
+ * @param fishTpl
  * @constructor
  */
-function FishCtrl($scope) {
-	$scope.fish = 'Carp';
+function FishCtrl($scope, fishTpl) {
+	$scope.fish = 'Carp' + fishTpl;
 }
 
 module.exports = FishCtrl;

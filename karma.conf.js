@@ -2,15 +2,15 @@
 // Generated on Mon Oct 13 2014 21:43:18 GMT-0700 (PDT)
 
 var path = require('path');
-var bower = require('main-bower-files');
+//var bower = require('main-bower-files');
 var build = require('./gulpfile.js');
 
 module.exports = function (config) {
 	// gulpfile.js exports its configuration, so it's leveraged here to not have to repeat file patterns (and so things
 	// won't break so easily if they change).
-	var bowerFiles = bower({includeDev: true}).filter(function (file) {
-		return file.substr(-3) === '.js';
-	});
+//	var bowerFiles = bower({includeDev: true}).filter(function (file) {
+//		return file.substr(-3) === '.js';
+//	});
 	var jsFiles = [].concat(build.config.filePatterns.js.all).map(function (pattern) {
 		return path.join(build.config.paths.src, pattern);
 	});
@@ -25,7 +25,7 @@ module.exports = function (config) {
 		frameworks: ['jasmine', 'angular-filesort'],
 
 		// list of files / patterns to load in the browser
-		files: bowerFiles.concat(jsFiles),
+//		files: bowerFiles.concat(jsFiles),
 
 		// list of files to exclude
 		exclude: [

@@ -7,8 +7,6 @@
 var gulp = require('gulp');
 var connect = require('gulp-connect');
 var pipeline = require('connect-resource-pipeline');
-var filter = require('gulp-filter');
-var bower = require('main-bower-files');
 var htmlAssets = require('../streams/html-assets.js');
 var jsAssets = require('../streams/js-assets.js');
 var cssAssets = require('../streams/css-assets.js');
@@ -35,22 +33,26 @@ module.exports = function (config) {
 				root: config.paths.src,
 				port: config.server.devPort,
 				middleware: function (connect) {
+					var html = htmlAssets(config);
+					var js = jsAssets(config);
+					var css = cssAssets(config);
+
 					return [
 						connect().use(pipeline([
 							{url: '/' + config.outputFiles.app.index, pipeline: function () {
-								return htmlAssets(config).getIndexFileStream();
+								return html.getIndexFileStream();
 							}},
 							{url: '/' + config.outputFiles.app.js, pipeline: function () {
-								return jsAssets(config).getDevAssetStream(false);
+								return js.getDevAssetStream(false);
 							}},
 							{url: '/' + config.outputFiles.app.css, pipeline: function () {
-								return cssAssets(config).getAssetStream(false);
+								return css.getAssetStream(false);
 							}},
 							{url: '/' + config.outputFiles.deps.js, pipeline: function () {
-								return gulp.src(bower()).pipe(filter(config.filePatterns.js.all));
-							}},
-							{url: '/' + config.outputFiles.deps.css, pipeline: function () {
-								return gulp.src(bower()).pipe(filter(config.filePatterns.css.all));
+								return js.getDepsAssetStream();
+//							}},
+//							{url: '/' + config.outputFiles.deps.css, pipeline: function () {
+//								return gulp.src(bower()).pipe(filter(config.filePatterns.css.all));
 							}}
 						])),
 						connect().use(connect.static('dev'))

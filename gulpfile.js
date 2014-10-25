@@ -71,6 +71,7 @@ var config = {
 		js: {
 			all: '**/*.js',
 			entryPoint: 'app.js',
+			devEntryPoint: 'dev.js',
 			tests: '**/*-spec.js'
 		},
 		css: {

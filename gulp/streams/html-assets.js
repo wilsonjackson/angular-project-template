@@ -8,7 +8,6 @@ var gulp = require('gulp');
 var path = require('path');
 var es = require('event-stream');
 var File = require('vinyl');
-var filter = require('gulp-filter');
 var inject = require('gulp-inject');
 
 /**
@@ -38,17 +37,6 @@ module.exports = function (config) {
 				// Inject deps file references
 				.pipe(inject(fileRefs(config.outputFiles.deps.js, config.outputFiles.deps.css),
 					{name: 'deps', addRootSlash: false}));
-		},
-
-		/**
-		 * Creates a readable stream containing all the app's partial templates (everything but the index).
-		 *
-		 * @return {stream.Readable}
-		 */
-		getTemplateStream: function () {
-			return gulp.src(path.join(config.paths.src, config.filePatterns.html.all))
-				// Filter out the index file
-				.pipe(filter(['**/*', '!' + config.outputFiles.app.index]));
 		}
 	};
 };
