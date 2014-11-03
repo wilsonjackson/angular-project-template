@@ -2,18 +2,14 @@
 // Generated on Mon Oct 13 2014 21:43:18 GMT-0700 (PDT)
 
 var path = require('path');
-//var bower = require('main-bower-files');
+var _ = require('lodash');
+var blibs = require('browser-libs');
 var build = require('./gulpfile.js');
 
 module.exports = function (config) {
-	// gulpfile.js exports its configuration, so it's leveraged here to not have to repeat file patterns (and so things
-	// won't break so easily if they change).
-//	var bowerFiles = bower({includeDev: true}).filter(function (file) {
-//		return file.substr(-3) === '.js';
-//	});
-	var jsFiles = [].concat(build.config.filePatterns.js.all).map(function (pattern) {
-		return path.join(build.config.paths.src, pattern);
-	});
+	// gulpfile.js exports its configuration, which is leveraged here so file patterns don't have to be repeated (so
+	// things won't break so easily if they change).
+	var testFilePattern = path.join(build.config.paths.src, build.config.filePatterns.js.tests);
 
 	config.set({
 
@@ -22,10 +18,13 @@ module.exports = function (config) {
 
 		// frameworks to use
 		// available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-		frameworks: ['jasmine', 'angular-filesort'],
+		frameworks: ['browserify', 'jasmine'],
 
 		// list of files / patterns to load in the browser
-//		files: bowerFiles.concat(jsFiles),
+		files: blibs.sync().concat([
+			'node_modules/angular-mocks/angular-mocks.js',
+			testFilePattern
+		]),
 
 		// list of files to exclude
 		exclude: [
@@ -33,8 +32,10 @@ module.exports = function (config) {
 
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-		preprocessors: {
-		},
+		preprocessors: (function (p) {
+			p[testFilePattern] = ['browserify'];
+			return p;
+		})({}),
 
 		// test results reporter to use
 		// possible values: 'dots', 'progress'
@@ -60,10 +61,11 @@ module.exports = function (config) {
 
 		// Continuous Integration mode
 		// if true, Karma captures browsers, runs the tests and exits
-		singleRun: false,
+		singleRun: true,
 
-		angularFilesort: {
-			whitelist: jsFiles
+		browserify: {
+			debug: true,
+			transform: ['brfs']
 		}
 	});
 };

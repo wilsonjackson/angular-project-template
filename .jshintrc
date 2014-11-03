@@ -20,7 +20,6 @@
 	"globals": {
 		"_": true,
 		"jasmine": false,
-		"inject": true,
 		"describe": false,
 		"it": false,
 		"beforeEach": false,

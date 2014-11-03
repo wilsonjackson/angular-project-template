@@ -8,7 +8,7 @@
  * @constructor
  */
 function FishCtrl($scope, fishTpl) {
-	$scope.fish = 'Carp' + fishTpl;
+	$scope.fish = 'Trout ' + fishTpl;
 }
 
 module.exports = FishCtrl;
