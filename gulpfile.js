@@ -55,8 +55,8 @@ var config = {
 		dist: 'dist',
 		// Used during a build to store mappings of revisioned filenames.
 		rev: 'rev',
-		// Standard bower install directory.
-		bower: 'bower_components'
+		// Location of installed dependencies.
+		deps: 'node_modules'
 	},
 	/**
 	 * Patterns for selecting files, typically used with `gulp.src()`.

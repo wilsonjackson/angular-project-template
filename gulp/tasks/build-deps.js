@@ -5,10 +5,11 @@
 'use strict';
 
 var gulp = require('gulp');
-var filter = require('gulp-filter');
+var es = require('event-stream');
 var concat = require('gulp-concat');
 var rev = require('gulp-rev');
 var jsAssets = require('../streams/js-assets');
+var cssAssets = require('../streams/css-assets');
 
 module.exports = function (config) {
 	return {
@@ -23,18 +24,11 @@ module.exports = function (config) {
 		 * @return {stream.Readable}
 		 */
 		task: function () {
-			var jsFilter = filter(config.filePatterns.js.all);
-			var cssFilter = filter(config.filePatterns.css.all);
-
-			// Base path must be specified explicitly or the process of including and excluding files via a filter results in
-			// absolute file paths being written to the rev manifest rather than relative ones.
-			return jsAssets(config).getDepsAssetStream()
-				.pipe(jsFilter)
-				.pipe(concat(config.outputFiles.deps.js))
-				.pipe(jsFilter.restore())
-				.pipe(cssFilter)
-				.pipe(concat(config.outputFiles.deps.css))
-				.pipe(cssFilter.restore())
+			return es.merge(
+				jsAssets(config).getDepsAssetStream()
+					.pipe(concat(config.outputFiles.deps.js)),
+				cssAssets(config).getDepsAssetStream()
+					.pipe(concat(config.outputFiles.deps.css)))
 				.pipe(rev())
 				.pipe(gulp.dest(config.paths.dist))
 				.pipe(rev.manifest({path: config.outputFiles.deps.rev}))

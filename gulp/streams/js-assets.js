@@ -6,11 +6,10 @@
 
 var gulp = require('gulp');
 var path = require('path');
-var es = require('event-stream');
 var gIf = require('gulp-if');
 var ngAnnotate = require('gulp-ng-annotate');
 var uglify = require('gulp-uglify');
-var blibs = require('../../../browser-libs');
+var blibs = require('browser-libs');
 var browserify = require('browserify');
 var watchify = require('watchify');
 var source = require('vinyl-source-stream');
@@ -84,19 +83,7 @@ module.exports = function (config) {
 		 * @returns {stream.Readable}
 		 */
 		getDepsAssetStream: function () {
-			return es.readable(function () {
-				var self = this;
-				blibs(function (err, libs) {
-					if (err) {
-						return self.emit('error', err);
-					}
-					gulp.src(libs).pipe(es.through(function (file) {
-						self.emit('data', file);
-					}, function () {
-						self.emit('end');
-					}));
-				});
-			});
+			return gulp.src(blibs(), {base: config.paths.deps});
 		}
 	};
 };

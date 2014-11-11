@@ -11,6 +11,7 @@ var filter = require('gulp-filter');
 var less = require('gulp-less');
 var autoprefixer = require('gulp-autoprefixer');
 var csso = require('gulp-csso');
+var blibs = require('browser-libs');
 
 module.exports = function (config) {
 	return {
@@ -27,6 +28,15 @@ module.exports = function (config) {
 				.pipe(less())
 				.pipe(autoprefixer())
 				.pipe(gIf(minify, csso()));
+		},
+
+		/**
+		 * Creates a readable stream containing the app's dependencies.
+		 *
+		 * @returns {stream.Readable}
+		 */
+		getDepsAssetStream: function () {
+			return gulp.src(blibs.style(), {base: config.paths.deps});
 		}
 	};
 };

@@ -50,9 +50,9 @@ module.exports = function (config) {
 							}},
 							{url: '/' + config.outputFiles.deps.js, pipeline: function () {
 								return js.getDepsAssetStream();
-//							}},
-//							{url: '/' + config.outputFiles.deps.css, pipeline: function () {
-//								return gulp.src(bower()).pipe(filter(config.filePatterns.css.all));
+							}},
+							{url: '/' + config.outputFiles.deps.css, pipeline: function () {
+								return css.getDepsAssetStream();
 							}}
 						])),
 						connect().use(connect.static('dev'))
