@@ -21,6 +21,8 @@ module.exports = function (config) {
 					'**/*.*', // *.* pattern excludes empty directories
 						'!' + config.filePatterns.html.all,
 						'!' + config.filePatterns.js.all,
+						'!' + config.filePatterns.js.fileWrapper,
+						'!' + config.filePatterns.js.appWrapper,
 						'!' + config.filePatterns.less.all
 				]))
 				.pipe(gulp.dest(config.paths.dist));

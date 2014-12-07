@@ -18,6 +18,7 @@
 	"trailing": true,
 	"smarttabs": true,
 	"globals": {
+		"angular": false,
 		"_": true,
 		"jasmine": false,
 		"describe": false,
@@ -25,6 +26,8 @@
 		"beforeEach": false,
 		"afterEach": false,
 		"expect": false,
-		"sinon": false
+		"sinon": false,
+		"module": false,
+		"inject": false
 	}
 }

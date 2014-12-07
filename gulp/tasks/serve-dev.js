@@ -5,6 +5,7 @@
 'use strict';
 
 var gulp = require('gulp');
+var addStream = require('add-stream');
 var connect = require('gulp-connect');
 var pipeline = require('connect-resource-pipeline');
 var htmlAssets = require('../streams/html-assets.js');
@@ -43,13 +44,14 @@ module.exports = function (config) {
 								return html.getIndexFileStream();
 							}},
 							{url: '/' + config.outputFiles.app.js, pipeline: function () {
-								return js.getDevAssetStream(false);
+								return js.getDevAssetStream();
 							}},
 							{url: '/' + config.outputFiles.app.css, pipeline: function () {
-								return css.getAssetStream(false);
+								return css.getAssetStream();
 							}},
 							{url: '/' + config.outputFiles.deps.js, pipeline: function () {
-								return js.getDepsAssetStream();
+								return js.getDepsAssetStream()
+									.pipe(addStream.obj(gulp.src(config.project.devDependencies)));
 							}},
 							{url: '/' + config.outputFiles.deps.css, pipeline: function () {
 								return css.getDepsAssetStream();

@@ -2,15 +2,12 @@
 // Generated on Mon Oct 13 2014 21:43:18 GMT-0700 (PDT)
 
 var path = require('path');
-var _ = require('lodash');
 var blibs = require('browser-libs');
 var build = require('./gulpfile.js');
 
 module.exports = function (config) {
 	// gulpfile.js exports its configuration, which is leveraged here so file patterns don't have to be repeated (so
 	// things won't break so easily if they change).
-	var testFilePattern = path.join(build.config.paths.src, build.config.filePatterns.js.tests);
-
 	config.set({
 
 		// base path that will be used to resolve all patterns (eg. files, exclude)
@@ -18,13 +15,14 @@ module.exports = function (config) {
 
 		// frameworks to use
 		// available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-		frameworks: ['browserify', 'jasmine'],
+		frameworks: ['jasmine'],
 
 		// list of files / patterns to load in the browser
-		files: blibs().concat([
-			'node_modules/angular-mocks/angular-mocks.js',
-			testFilePattern
-		]),
+		files: blibs()
+			.concat(build.config.project.testDependencies)
+			.concat(build.config.filePatterns.js.sorted.map(function (pattern) {
+				return path.join(build.config.paths.src, pattern);
+			})),
 
 		// list of files to exclude
 		exclude: [
@@ -32,9 +30,9 @@ module.exports = function (config) {
 
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-		preprocessors: (function (p) {
-			p[testFilePattern] = ['browserify'];
-			return p;
+		preprocessors: (function (preprocessors) {
+			preprocessors[path.join(build.config.paths.src, build.config.filePatterns.js.src)] = ['wrap'];
+			return preprocessors;
 		})({}),
 
 		// test results reporter to use
@@ -64,9 +62,8 @@ module.exports = function (config) {
 		// if true, Karma captures browsers, runs the tests and exits
 		singleRun: false,
 
-		browserify: {
-			debug: true,
-			transform: ['brfs']
+		wrapPreprocessor: {
+			file: path.join(build.config.paths.src, build.config.filePatterns.js.fileWrapper)
 		}
 	});
 };

@@ -30,7 +30,15 @@ var config = {
 	project: {
 		// The name of the top-level angular module. This shouldn't change.
 		module: 'app',
-		basedir: __dirname
+		basedir: __dirname,
+		// Extra dependencies (besides automatic ones) to be included by the development server.
+		devDependencies: [
+			'node_modules/angular-mocks/angular-mocks.js'
+		],
+		// Extra dependencies (besides automatic ones) to be included by the test runner.
+		testDependencies: [
+			'node_modules/angular-mocks/angular-mocks.js'
+		]
 	},
 	/**
 	 * Server configuration.
@@ -70,9 +78,12 @@ var config = {
 		},
 		js: {
 			all: '**/*.js',
-			entryPoint: 'app.js',
-			devEntryPoint: 'dev.js',
-			tests: '**/*-spec.js'
+			src: '**/!(*-spec).js',
+			// Sub-patterns for sorting files into the correct load order.
+			sorted: ['**/app.js', '**/*.module.js', '**/*.js'],
+			// These files will be used to wrap concatenated javascript at build time.
+			fileWrapper: 'file-wrapper.txt',
+			appWrapper: 'app-wrapper.txt'
 		},
 		css: {
 			all: '**/*.css'

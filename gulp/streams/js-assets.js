@@ -6,57 +6,31 @@
 
 var gulp = require('gulp');
 var path = require('path');
-var gIf = require('gulp-if');
+var addStream = require('add-stream');
+var wrap = require('gulp-wrap');
+var order = require('gulp-order');
 var ngAnnotate = require('gulp-ng-annotate');
-var uglify = require('gulp-uglify');
+var ngTplCache = require('gulp-angular-templatecache');
 var blibs = require('browser-libs');
-var browserify = require('browserify');
-var watchify = require('watchify');
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
-var _ = require('lodash');
+var htmlAssets = require('./html-assets');
 
 module.exports = function (config) {
-	var watchedBundler = null;
-
-	/**
-	 * Initializes a browserify bundler containing the main application sources.
-	 *
-	 * @param {object} args Arguments for browserify.
-	 * @returns {function(): stream.Readable}
-	 */
-	function createBundler(args) {
-		var bundler = browserify(_.assign({basedir: config.project.basedir, excludeExternal: true}, args || {}));
-		bundler.add('./' + path.join(config.paths.src, config.filePatterns.js.entryPoint));
-		return bundler;
-	}
-
-	/**
-	 * Processes a browserify bundle into a full js asset stream.
-	 *
-	 * @param {stream.Readable} bundle
-	 * @param {boolean} minify
-	 * @returns {stream.Readable}
-	 */
-	function bundleToAssetStream(bundle, minify) {
-		return bundle
-			.pipe(source(config.outputFiles.app.js))
-			.pipe(buffer())
-			.pipe(ngAnnotate())
-			.pipe(gIf(minify, uglify()));
-	}
-
 	return {
 		/**
 		 * Creates a readable stream containing the app's js assets, optionally minified.
 		 *
 		 * Included in the stream are the app's templates, compiled and loaded into angular's template cache.
 		 *
-		 * @param {boolean} [minify] Whether to minify the assets (default false).
 		 * @return {stream.Readable}
 		 */
-		getAssetStream: function (minify) {
-			return bundleToAssetStream(createBundler().bundle(), minify);
+		getAssetStream: function () {
+			return gulp.src(path.join(config.paths.src, config.filePatterns.js.src))
+				.pipe(wrap({src: path.join(config.paths.src, config.filePatterns.js.fileWrapper)}))
+				.pipe(order(config.filePatterns.js.sorted))
+				.pipe(ngAnnotate())
+				// Append the html assets (transformed into js) after the js assets
+				.pipe(addStream.obj(htmlAssets(config).getTemplateAssetStream()
+					.pipe(ngTplCache({module: config.project.module}))));
 		},
 
 		/**
@@ -65,16 +39,14 @@ module.exports = function (config) {
 		 * Dev assets are appended to the main assets, allowing them to piggyback on the main app and override/extend
 		 * stuff easily.
 		 *
-		 * @param {boolean} [minify] Whether to minify the assets (default false).
 		 * @return {stream.Readable}
 		 */
-		getDevAssetStream: function (minify) {
-			if (watchedBundler === null) {
-				var bundler = createBundler(watchify.args);
-				bundler.add('./' + path.join(config.paths.dev, config.filePatterns.js.devEntryPoint));
-				watchedBundler = watchify(bundler);
-			}
-			return bundleToAssetStream(watchedBundler.bundle(), minify);
+		getDevAssetStream: function () {
+			return this.getAssetStream()
+				.pipe(addStream.obj(gulp.src(path.join(config.paths.dev, config.filePatterns.js.all))
+					.pipe(wrap({src: path.join(config.paths.src, config.filePatterns.js.fileWrapper)}))
+					.pipe(order(config.filePatterns.js.sorted))
+					.pipe(ngAnnotate())));
 		},
 
 		/**
