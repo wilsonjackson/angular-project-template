@@ -14,8 +14,6 @@
 'use strict';
 
 var gulp = require('gulp');
-var glob = require('glob');
-var path = require('path');
 
 /**
  * Build configuration.
@@ -123,17 +121,21 @@ var config = {
 	}
 };
 
-// If gulp is running, register tasks. Otherwise assume this file is being required by another script for its
-// exported config.
-if (path.basename(process.argv[1]) === 'gulp') {
-	// All tasks are defined in 'gulp/tasks' and have a uniform structure: they export a function that takes the config
-	// object as its only argument and returns an object with a task definition and a 'register' method.
-	glob.sync('gulp/tasks/*.js').forEach(function (task) {
-		require('./' + task)(config).register();
-	});
+gulp.task('default', ['build']);
+gulp.task('build', requireTask('build'));
+gulp.task('build-css', requireTask('build-css'));
+gulp.task('build-deps', requireTask('build-deps'));
+gulp.task('build-html', requireTask('build-html'));
+gulp.task('build-js', requireTask('build-js'));
+gulp.task('clean', requireTask('clean'));
+gulp.task('copy-assets', requireTask('copy-assets'));
+gulp.task('lint', requireTask('lint'));
+gulp.task('serve', requireTask('serve'));
+gulp.task('serve-dev', requireTask('serve-dev'));
+gulp.task('test', requireTask('test'));
 
-	// Run the 'build' task when no specific task is specified.
-	gulp.task('default', ['build']);
+function requireTask(name) {
+	return require('./gulp/tasks/' + name + '.js')(config);
 }
 
 module.exports = {

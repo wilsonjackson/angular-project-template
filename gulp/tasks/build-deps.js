@@ -12,36 +12,25 @@ var jsAssets = require('../streams/js-assets');
 var cssAssets = require('../streams/css-assets');
 
 module.exports = function (config) {
-	return {
-		/**
-		 * Compiles all of the app's dependencies and writes them to `dist`.
-		 *
-		 * This will produce a single js file containing all concatenated scripts and a single css file containing all
-		 * concatenated stylesheets. Neither file is minified, as it is presumed that they are supplied in minified form.
-		 *
-		 * If there are any dependency files of types other than js or css, they'll be copied as-is to `dist`.
-		 *
-		 * @return {stream.Readable}
-		 */
-		task: function () {
-			return es.merge(
-				jsAssets(config).getDepsAssetStream()
-					.pipe(concat(config.outputFiles.deps.js)),
-				cssAssets(config).getDepsAssetStream()
-					.pipe(concat(config.outputFiles.deps.css)))
-				.pipe(rev())
-				.pipe(gulp.dest(config.paths.dist))
-				.pipe(rev.manifest({path: config.outputFiles.deps.rev}))
-				.pipe(gulp.dest(config.paths.rev));
-		},
-
-		/**
-		 * Registers the `build-deps` task with gulp.
-		 *
-		 * @param {string} [name] Task name (default: 'build-deps')
-		 */
-		register: function (name) {
-			gulp.task(name || 'build-deps', this.task);
-		}
+	/**
+	 * Compiles all of the app's dependencies and writes them to `dist`.
+	 *
+	 * This will produce a single js file containing all concatenated scripts and a single css file containing all
+	 * concatenated stylesheets. Neither file is minified, as it is presumed that they are supplied in minified form.
+	 *
+	 * If there are any dependency files of types other than js or css, they'll be copied as-is to `dist`.
+	 *
+	 * @return {stream.Readable}
+	 */
+	return function () {
+		return es.merge(
+			jsAssets(config).getDepsAssetStream()
+				.pipe(concat(config.outputFiles.deps.js)),
+			cssAssets(config).getDepsAssetStream()
+				.pipe(concat(config.outputFiles.deps.css)))
+			.pipe(rev())
+			.pipe(gulp.dest(config.paths.dist))
+			.pipe(rev.manifest({path: config.outputFiles.deps.rev}))
+			.pipe(gulp.dest(config.paths.rev));
 	};
 };

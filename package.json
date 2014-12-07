@@ -14,7 +14,6 @@
     "connect-resource-pipeline": "^0.2.1",
     "del": "^1.1.0",
     "event-stream": "^3.1.7",
-    "glob": "^4.3.1",
     "gulp": "^3.8.10",
     "gulp-angular-templatecache": "^1.4.2",
     "gulp-autoprefixer": "^2.0.0",
