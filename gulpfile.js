@@ -38,7 +38,12 @@ var config = {
 		// Extra dependencies (besides automatic ones) to be included by the test runner.
 		testDependencies: [
 			'node_modules/angular-mocks/angular-mocks.js'
-		]
+		],
+		// Extra directories that will be mapped under the document root.
+		// Keys are paths relative to docroot, values are paths relative to project root.
+		urlMappings: {
+			'/fonts': 'node_modules/bootstrap/dist/fonts'
+		}
 	},
 	/**
 	 * Server configuration.

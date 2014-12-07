@@ -11,6 +11,7 @@ var pipeline = require('connect-resource-pipeline');
 var htmlAssets = require('../streams/html-assets.js');
 var jsAssets = require('../streams/js-assets.js');
 var cssAssets = require('../streams/css-assets.js');
+var _ = require('lodash');
 
 module.exports = function (config) {
 	return {
@@ -58,7 +59,9 @@ module.exports = function (config) {
 							}}
 						])),
 						connect().use(connect.static('dev'))
-					];
+					].concat(_.map(config.project.urlMappings, function (dir, url) {
+							return connect().use(url, connect.static(dir));
+						}));
 				}
 			});
 		},
