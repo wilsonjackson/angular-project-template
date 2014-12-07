@@ -62,10 +62,12 @@ var config = {
 		src: 'src',
 		// Dev-only source root. See dev task definition for details on how this is used.
 		dev: 'dev',
-		// Target directory for built artifacts.
-		dist: 'dist',
+		// Parent directory for build artifacts.
+		build: 'build',
+		// Target directory for built application.
+		dist: 'build/dist',
 		// Used during a build to store mappings of revisioned filenames.
-		rev: 'rev',
+		rev: 'build/rev',
 		// Location of installed dependencies.
 		deps: 'node_modules'
 	},

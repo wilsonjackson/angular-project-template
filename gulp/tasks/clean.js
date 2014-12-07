@@ -13,6 +13,6 @@ module.exports = function (config) {
 	 * @param {Function} cb Done callback.
 	 */
 	return function (cb) {
-		del([config.paths.rev, config.paths.dist], cb);
+		del(config.paths.build, cb);
 	};
 };
