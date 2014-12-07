@@ -7,6 +7,7 @@
 var gulp = require('gulp');
 var path = require('path');
 var addStream = require('add-stream');
+var concat = require('gulp-concat');
 var wrap = require('gulp-wrap');
 var order = require('gulp-order');
 var ngAnnotate = require('gulp-ng-annotate');
@@ -46,7 +47,9 @@ module.exports = function (config) {
 				.pipe(addStream.obj(gulp.src(path.join(config.paths.dev, config.filePatterns.js.all))
 					.pipe(wrap({src: path.join(config.paths.src, config.filePatterns.js.fileWrapper)}))
 					.pipe(order(config.filePatterns.js.sorted))
-					.pipe(ngAnnotate())));
+					.pipe(ngAnnotate())))
+				.pipe(concat(config.outputFiles.app.js))
+				.pipe(wrap({src: path.join(config.paths.src, config.filePatterns.js.appWrapper)}));
 		},
 
 		/**
