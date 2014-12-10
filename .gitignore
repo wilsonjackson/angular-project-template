@@ -14,5 +14,4 @@ bower_components
 /local
 
 # Build output
-/dist
-/rev
+/build
