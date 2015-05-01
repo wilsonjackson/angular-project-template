@@ -45,6 +45,10 @@ var config = {
         // Keys are paths relative to docroot, values are paths relative to project root.
         urlMappings: {
             '/fonts': 'node_modules/bootstrap/dist/fonts'
+        },
+        // File filters for the above urlMappings. These will be used with gulp-filter.
+        // Keys are paths relative to docroot, values are glob-style filters for files to include.
+        urlMappingFilters: {
         }
     },
     /**

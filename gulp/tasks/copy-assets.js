@@ -30,6 +30,7 @@ module.exports = function (config) {
             .pipe(gulp.dest(config.paths.dist)));
         _.forEach(config.project.urlMappings, function (srcPath, destPath) {
             streams.push(gulp.src(path.join(config.project.basedir, srcPath, '**/*'))
+                .pipe(filter(config.project.urlMappingFilters[destPath] || '**/*'))
                 .pipe(gulp.dest(path.join(config.paths.dist, destPath.replace(/^\//, '')))));
         });
         return es.merge.apply(es, streams);
