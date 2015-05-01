@@ -89,7 +89,7 @@ var config = {
             all: '**/*.js',
             src: '**/!(*-spec).js',
             // Sub-patterns for sorting files into the correct load order.
-            sorted: ['**/app.js', '**/*.module.js', '**/*.js'],
+            sorted: ['**/app.js', '**/dev.js', '**/*.module.js', '**/*.js'],
             // These files will be used to wrap concatenated javascript at build time.
             fileWrapper: 'file-wrapper.txt',
             appWrapper: 'app-wrapper.txt'
