@@ -21,6 +21,7 @@
         "angular": false,
         "_": true,
         "jasmine": false,
+        "spyOn": false,
         "describe": false,
         "it": false,
         "beforeEach": false,
