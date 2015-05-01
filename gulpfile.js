@@ -1,6 +1,6 @@
 /**
  * @fileoverview Standard build file for an AngularJS-based SPA.
- * 
+ *
  * This file hosts configuration for all gulp tasks. The contents of the configuration should be limited to what would
  * normally be literals in the task definition (paths, urls, ports, etc.) and not anything behavior-related.
  *
@@ -17,110 +17,110 @@ var gulp = require('gulp');
 
 /**
  * Build configuration.
- * 
+ *
  * The values declared in this config object are used throughout the build, and exported so that they may be referenced
  * by other node modules (for example, Karma).
  */
 var config = {
-	/**
-	 * Information about the project.
-	 */
-	project: {
-		// The name of the top-level angular module. This shouldn't change.
-		module: 'app',
-		basedir: __dirname,
-		// Extra dependencies (besides automatic ones) to be included by the development server.
-		devDependencies: [
-			'node_modules/angular-mocks/angular-mocks.js'
-		],
-		// Extra dependencies (besides automatic ones) to be included by the test runner.
-		testDependencies: [
-			'node_modules/angular-mocks/angular-mocks.js'
-		],
-		// Extra directories that will be mapped under the document root.
-		// Keys are paths relative to docroot, values are paths relative to project root.
-		urlMappings: {
-			'/fonts': 'node_modules/bootstrap/dist/fonts'
-		}
-	},
-	/**
-	 * Server configuration.
-	 */
-	server: {
-		port: 8080,
-		devPort: 8080
-	},
-	/**
-	 * Paths to important directories used by the build.
-	 * 
-	 * All paths are relative to the root project directory, which is gulp's `cwd`. Do not include a './' prefix or a
-	 * trailing slash, as these paths are sometimes used as a component in `path.join()`.
-	 */
-	paths: {
-		// Main application source root. All asset types are mixed together in src, and are differentiated at build
-		// time using the file patterns below.
-		src: 'src',
-		// Dev-only source root. See dev task definition for details on how this is used.
-		dev: 'dev',
-		// Parent directory for build artifacts.
-		build: 'build',
-		// Target directory for built application.
-		dist: 'build/dist',
-		// Used during a build to store mappings of revisioned filenames.
-		rev: 'build/rev',
-		// Location of installed dependencies.
-		deps: 'node_modules'
-	},
-	/**
-	 * Patterns for selecting files, typically used with `gulp.src()`.
-	 * 
-	 * All patterns should exclude any preceding slash, as they'll usually be combined with one of the paths above.
-	 */
-	filePatterns: {
-		html: {
-			// Includes the main index file and all Angular templates.
-			all: '**/*.html'
-		},
-		js: {
-			all: '**/*.js',
-			src: '**/!(*-spec).js',
-			// Sub-patterns for sorting files into the correct load order.
-			sorted: ['**/app.js', '**/*.module.js', '**/*.js'],
-			// These files will be used to wrap concatenated javascript at build time.
-			fileWrapper: 'file-wrapper.txt',
-			appWrapper: 'app-wrapper.txt'
-		},
-		css: {
-			all: '**/*.css'
-		},
-		less: {
-			all: '**/*.less',
-			// Excludes are files that are manually @imported from other less files.
-			excludes: '**/less/*.less'
-		},
-		rev: {
-			all: '**/*.json'
-		}
-	},
-	/**
-	 * Destination filenames for assets created during a build.
-	 */
-	outputFiles: {
-		app: {
-			index: 'index.html',
-			js: 'app.js',
-			css: 'app.css',
-			rev: {
-				js: 'app-js-manifest.json',
-				css: 'app-css-manifest.json'
-			}
-		},
-		deps: {
-			js: 'deps.js',
-			css: 'deps.css',
-			rev: 'deps-manifest.json'
-		}
-	}
+    /**
+     * Information about the project.
+     */
+    project: {
+        // The name of the top-level angular module. This shouldn't change.
+        module: 'app',
+        basedir: __dirname,
+        // Extra dependencies (besides automatic ones) to be included by the development server.
+        devDependencies: [
+            'node_modules/angular-mocks/angular-mocks.js'
+        ],
+        // Extra dependencies (besides automatic ones) to be included by the test runner.
+        testDependencies: [
+            'node_modules/angular-mocks/angular-mocks.js'
+        ],
+        // Extra directories that will be mapped under the document root.
+        // Keys are paths relative to docroot, values are paths relative to project root.
+        urlMappings: {
+            '/fonts': 'node_modules/bootstrap/dist/fonts'
+        }
+    },
+    /**
+     * Server configuration.
+     */
+    server: {
+        port: 8080,
+        devPort: 8080
+    },
+    /**
+     * Paths to important directories used by the build.
+     *
+     * All paths are relative to the root project directory, which is gulp's `cwd`. Do not include a './' prefix or a
+     * trailing slash, as these paths are sometimes used as a component in `path.join()`.
+     */
+    paths: {
+        // Main application source root. All asset types are mixed together in src, and are differentiated at build
+        // time using the file patterns below.
+        src: 'src',
+        // Dev-only source root. See dev task definition for details on how this is used.
+        dev: 'dev',
+        // Parent directory for build artifacts.
+        build: 'build',
+        // Target directory for built application.
+        dist: 'build/dist',
+        // Used during a build to store mappings of revisioned filenames.
+        rev: 'build/rev',
+        // Location of installed dependencies.
+        deps: 'node_modules'
+    },
+    /**
+     * Patterns for selecting files, typically used with `gulp.src()`.
+     *
+     * All patterns should exclude any preceding slash, as they'll usually be combined with one of the paths above.
+     */
+    filePatterns: {
+        html: {
+            // Includes the main index file and all Angular templates.
+            all: '**/*.html'
+        },
+        js: {
+            all: '**/*.js',
+            src: '**/!(*-spec).js',
+            // Sub-patterns for sorting files into the correct load order.
+            sorted: ['**/app.js', '**/*.module.js', '**/*.js'],
+            // These files will be used to wrap concatenated javascript at build time.
+            fileWrapper: 'file-wrapper.txt',
+            appWrapper: 'app-wrapper.txt'
+        },
+        css: {
+            all: '**/*.css'
+        },
+        less: {
+            all: '**/*.less',
+            // Excludes are files that are manually @imported from other less files.
+            excludes: '**/less/*.less'
+        },
+        rev: {
+            all: '**/*.json'
+        }
+    },
+    /**
+     * Destination filenames for assets created during a build.
+     */
+    outputFiles: {
+        app: {
+            index: 'index.html',
+            js: 'app.js',
+            css: 'app.css',
+            rev: {
+                js: 'app-js-manifest.json',
+                css: 'app-css-manifest.json'
+            }
+        },
+        deps: {
+            js: 'deps.js',
+            css: 'deps.css',
+            rev: 'deps-manifest.json'
+        }
+    }
 };
 
 gulp.task('default', ['build']);
@@ -137,9 +137,9 @@ gulp.task('serve-dev', requireTask('serve-dev'));
 gulp.task('test', requireTask('test'));
 
 function requireTask(name) {
-	return require('./gulp/tasks/' + name + '.js')(config);
+    return require('./gulp/tasks/' + name + '.js')(config);
 }
 
 module.exports = {
-	config: config
+    config: config
 };

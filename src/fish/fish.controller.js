@@ -9,5 +9,5 @@ angular.module('fish').controller('Fish', FishCtrl);
  * @constructor
  */
 function FishCtrl($scope) {
-	$scope.fish = 'Trout';
+    $scope.fish = 'Trout';
 }
