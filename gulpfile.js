@@ -133,10 +133,12 @@ var config = {
 
 gulp.task('default', ['build']);
 gulp.task('build', requireTask('build'));
+gulp.task('build-dev', requireTask('build', true));
 gulp.task('build-css', requireTask('build-css'));
 gulp.task('build-deps', requireTask('build-deps'));
 gulp.task('build-html', requireTask('build-html'));
 gulp.task('build-js', requireTask('build-js'));
+gulp.task('build-dev-js', requireTask('build-js', true));
 gulp.task('clean', requireTask('clean'));
 gulp.task('copy-assets', requireTask('copy-assets'));
 gulp.task('lint', requireTask('lint'));
@@ -145,7 +147,8 @@ gulp.task('serve-dev', requireTask('serve-dev'));
 gulp.task('test', requireTask('test'));
 
 function requireTask(name) {
-    return require('./gulp/tasks/' + name + '.js')(config);
+    var extraArgs = Array.prototype.slice.call(arguments, 1);
+    return require('./gulp/tasks/' + name + '.js').apply(null, [config].concat(extraArgs));
 }
 
 module.exports = {

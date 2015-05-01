@@ -6,7 +6,7 @@
 
 var sequence = require('run-sequence');
 
-module.exports = function () {
+module.exports = function (config, addDevSources) {
     /**
      * Performs a full build.
      *
@@ -17,7 +17,7 @@ module.exports = function () {
             'clean',
             'lint',
             'test',
-            ['build-js', 'build-css', 'build-deps'],
+            [addDevSources ? 'build-dev-js' : 'build-js', 'build-css', 'build-deps'],
             ['build-html', 'copy-assets'],
             cb);
     };

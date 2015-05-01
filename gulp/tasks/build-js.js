@@ -12,14 +12,14 @@ var uglify = require('gulp-uglify');
 var rev = require('gulp-rev');
 var jsAssets = require('../streams/js-assets.js');
 
-module.exports = function (config) {
+module.exports = function (config, addDevSources) {
     /**
      * Compiles all of the app's js into a single, minified asset in `dist`, which includes pre-cached templates.
      *
      * @return {stream.Readable}
      */
     return function () {
-        return jsAssets(config).getAssetStream()
+        return jsAssets(config)[addDevSources ? 'getDevAssetStream' : 'getAssetStream']()
             .pipe(concat(config.outputFiles.app.js))
             .pipe(wrap({src: path.join(config.paths.src, config.filePatterns.js.appWrapper)}))
             .pipe(uglify())
