@@ -28,6 +28,8 @@ var config = {
     project: {
         // The name of the top-level angular module. This shouldn't change.
         module: 'app',
+        // The module that templates should be cached in.
+        templateCacheModule: 'app.templates',
         basedir: __dirname,
         // Extra dependencies (besides automatic ones) to be included by the development server.
         devDependencies: [

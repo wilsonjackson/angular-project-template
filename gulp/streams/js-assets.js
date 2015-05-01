@@ -31,7 +31,7 @@ module.exports = function (config) {
                 .pipe(ngAnnotate())
                 // Append the html assets (transformed into js) after the js assets
                 .pipe(addStream.obj(htmlAssets(config).getTemplateAssetStream()
-                    .pipe(ngTplCache({module: config.project.module}))));
+                    .pipe(ngTplCache({module: config.project.templateCacheModule, standalone: true}))));
         },
 
         /**

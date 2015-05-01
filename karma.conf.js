@@ -20,17 +20,22 @@ module.exports = function (config) {
         // list of files / patterns to load in the browser
         files: blibs()
             .concat(build.config.project.testDependencies)
-            .concat(build.config.filePatterns.js.sorted.map(function (pattern) {
-                return path.join(build.config.paths.src, pattern);
-            })),
+            .concat(build.config.filePatterns.js.sorted
+                .concat(build.config.filePatterns.html.all)
+                .map(function (pattern) {
+                    return path.join(build.config.paths.src, pattern);
+                })),
 
         // list of files to exclude
-        exclude: [],
+        exclude: [
+            path.join(build.config.paths.src, build.config.outputFiles.app.index) // index.html
+        ],
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: (function (preprocessors) {
             preprocessors[path.join(build.config.paths.src, build.config.filePatterns.js.src)] = ['wrap'];
+            preprocessors[path.join(build.config.paths.src, build.config.filePatterns.html.all)] = ['ng-html2js'];
             return preprocessors;
         })({}),
 
@@ -63,6 +68,11 @@ module.exports = function (config) {
 
         wrapPreprocessor: {
             file: path.join(build.config.paths.src, build.config.filePatterns.js.fileWrapper)
+        },
+
+        ngHtml2JsPreprocessor: {
+            stripPrefix: build.config.paths.src + '/',
+            moduleName: build.config.project.templateCacheModule
         }
     });
 };
