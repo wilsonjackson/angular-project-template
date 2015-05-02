@@ -5,17 +5,38 @@
 'use strict';
 
 var gulp = require('gulp');
+var fs = require('fs');
 var path = require('path');
+var sourcemaps = require('gulp-sourcemaps');
 var addStream = require('add-stream');
-var concat = require('gulp-concat');
-var wrap = require('gulp-wrap');
+var wrap = require('gulp-wrap-js');
 var order = require('gulp-order');
 var ngAnnotate = require('gulp-ng-annotate');
+var concat = require('gulp-concat');
+var uglify = require('gulp-uglify');
 var ngTplCache = require('gulp-angular-templatecache');
 var blibs = require('browser-libs');
 var htmlAssets = require('./html-assets');
 
 module.exports = function (config) {
+    //noinspection JSUnresolvedFunction
+    var fileWrapper = fs.readFileSync(path.join(config.paths.src, config.filePatterns.js.fileWrapper)).toString();
+    //noinspection JSUnresolvedFunction
+    var appWrapper = fs.readFileSync(path.join(config.paths.src, config.filePatterns.js.appWrapper)).toString();
+
+    // Main application source bundle builder, used by both getAssetStream and getDevAssetStream.
+    function sources() {
+        return gulp.src(path.join(config.paths.src, config.filePatterns.js.src))
+            .pipe(order(config.filePatterns.js.sorted))
+            .pipe(sourcemaps.init())
+            .pipe(wrap(fileWrapper))
+            .pipe(ngAnnotate())
+            // Append the html assets (transformed into js) after the js assets
+            .pipe(addStream.obj(htmlAssets(config).getTemplateAssetStream()
+                .pipe(ngTplCache({module: config.project.templateCacheModule, standalone: true}))
+                .pipe(sourcemaps.init())));
+    }
+
     return {
         /**
          * Creates a readable stream containing the app's js assets, optionally minified.
@@ -25,13 +46,10 @@ module.exports = function (config) {
          * @return {stream.Readable}
          */
         getAssetStream: function () {
-            return gulp.src(path.join(config.paths.src, config.filePatterns.js.src))
-                .pipe(wrap({src: path.join(config.paths.src, config.filePatterns.js.fileWrapper)}))
-                .pipe(order(config.filePatterns.js.sorted))
-                .pipe(ngAnnotate())
-                // Append the html assets (transformed into js) after the js assets
-                .pipe(addStream.obj(htmlAssets(config).getTemplateAssetStream()
-                    .pipe(ngTplCache({module: config.project.templateCacheModule, standalone: true}))));
+            return sources()
+                .pipe(concat({path: config.outputFiles.app.js, cwd: ''}))
+                .pipe(wrap(appWrapper))
+                .pipe(uglify());
         },
 
         /**
@@ -43,13 +61,15 @@ module.exports = function (config) {
          * @return {stream.Readable}
          */
         getDevAssetStream: function () {
-            return this.getAssetStream()
+            return sources()
                 .pipe(addStream.obj(gulp.src(path.join(config.paths.dev, config.filePatterns.js.all))
-                    .pipe(wrap({src: path.join(config.paths.src, config.filePatterns.js.fileWrapper)}))
                     .pipe(order(config.filePatterns.js.sorted))
+                    .pipe(sourcemaps.init())
+                    .pipe(wrap(fileWrapper))
                     .pipe(ngAnnotate())))
-                .pipe(concat(config.outputFiles.app.js))
-                .pipe(wrap({src: path.join(config.paths.src, config.filePatterns.js.appWrapper)}));
+                .pipe(concat({path: config.outputFiles.app.js, cwd: ''}))
+                .pipe(wrap(appWrapper))
+                .pipe(uglify());
         },
 
         /**

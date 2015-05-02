@@ -1,4 +1,1 @@
-(function () {
-'use strict';
-<%= contents %>
-})();
+(function () { 'use strict'; %= body %; })();

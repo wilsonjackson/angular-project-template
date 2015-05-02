@@ -5,6 +5,8 @@
 'use strict';
 
 var gulp = require('gulp');
+var sourcemaps = require('gulp-sourcemaps');
+var concat = require('gulp-concat');
 var addStream = require('add-stream');
 var connect = require('gulp-connect');
 var pipeline = require('connect-resource-pipeline');
@@ -44,10 +46,12 @@ module.exports = function (config) {
                             return html.getIndexFileStream();
                         }},
                         {url: '/' + config.outputFiles.app.js, pipeline: function () {
-                            return js.getDevAssetStream();
+                            return js.getDevAssetStream()
+                                .pipe(sourcemaps.write());
                         }},
                         {url: '/' + config.outputFiles.app.css, pipeline: function () {
-                            return css.getAssetStream();
+                            return css.getAssetStream()
+                                .pipe(sourcemaps.write());
                         }},
                         {url: '/' + config.outputFiles.deps.js, pipeline: function () {
                             return js.getDepsAssetStream()

@@ -5,10 +5,7 @@
 'use strict';
 
 var gulp = require('gulp');
-var path = require('path');
-var concat = require('gulp-concat');
-var wrap = require('gulp-wrap');
-var uglify = require('gulp-uglify');
+var sourcemaps = require('gulp-sourcemaps');
 var rev = require('gulp-rev');
 var jsAssets = require('../streams/js-assets.js');
 
@@ -20,10 +17,8 @@ module.exports = function (config, addDevSources) {
      */
     return function () {
         return jsAssets(config)[addDevSources ? 'getDevAssetStream' : 'getAssetStream']()
-            .pipe(concat(config.outputFiles.app.js))
-            .pipe(wrap({src: path.join(config.paths.src, config.filePatterns.js.appWrapper)}))
-            .pipe(uglify())
             .pipe(rev())
+            .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(config.paths.dist))
             .pipe(rev.manifest({path: config.outputFiles.app.rev.js}))
             .pipe(gulp.dest(config.paths.rev));

@@ -67,7 +67,11 @@ module.exports = function (config) {
         singleRun: false,
 
         wrapPreprocessor: {
-            file: path.join(build.config.paths.src, build.config.filePatterns.js.fileWrapper)
+            file: path.join(build.config.paths.src, build.config.filePatterns.js.fileWrapper),
+            variable: 'body',
+            options: {
+                interpolate: /%=([\s\S]+?)%/g
+            }
         },
 
         ngHtml2JsPreprocessor: {
