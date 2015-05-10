@@ -7,10 +7,10 @@
 var gulp = require('gulp');
 var fs = require('fs');
 var path = require('path');
+var ts = require('gulp-typescript');
 var sourcemaps = require('gulp-sourcemaps');
 var addStream = require('add-stream');
 var wrap = require('gulp-wrap-js');
-var order = require('gulp-order');
 var ngAnnotate = require('gulp-ng-annotate');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
@@ -20,9 +20,7 @@ var htmlAssets = require('./html-assets');
 
 module.exports = function (config) {
     //noinspection JSUnresolvedFunction
-    var fileWrapper = fs.readFileSync(path.join(config.paths.src, config.filePatterns.js.fileWrapper)).toString();
-    //noinspection JSUnresolvedFunction
-    var appWrapper = fs.readFileSync(path.join(config.paths.src, config.filePatterns.js.appWrapper)).toString();
+    var appWrapper = fs.readFileSync(path.join(config.paths.src, config.filePatterns.ts.appWrapper)).toString();
 
     /**
      * Main application source bundle builder, used by both getAssetStream and getDevAssetStream.
@@ -36,13 +34,12 @@ module.exports = function (config) {
         // sourcemaps to resolve properly.
         var base = options.base || config.paths.src;
         var sources = sourceDirs.map(function (dir) {
-            return path.join(dir, config.filePatterns.js.src);
+            return path.join(dir, config.filePatterns.ts.src);
         });
 
         return gulp.src(sources)
-            .pipe(order(config.filePatterns.js.sorted))
             .pipe(sourcemaps.init())
-            .pipe(wrap(fileWrapper))
+            .pipe(ts(config.project.tscOptions)).js
             .pipe(ngAnnotate({gulpWarnings: false}))
             // Append the html assets (transformed into js) after the js assets
             .pipe(addStream.obj(htmlAssets(config).getTemplateAssetStream()
@@ -62,7 +59,7 @@ module.exports = function (config) {
          * @return {stream.Readable}
          */
         getAssetStream: function () {
-            return processSrc([config.paths.src]);
+            return processSrc([config.paths.src, config.paths.typings]);
         },
 
         /**
@@ -74,7 +71,7 @@ module.exports = function (config) {
          * @return {stream.Readable}
          */
         getDevAssetStream: function () {
-            return processSrc([config.paths.src, config.paths.dev], {base: '.'});
+            return processSrc([config.paths.src, config.paths.dev, config.paths.typings], {base: '.'});
         },
 
         /**

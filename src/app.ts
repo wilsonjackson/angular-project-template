@@ -1,6 +1,4 @@
-'use strict';
-
 angular.module('app', [
     'app.templates',
-    'fish'
+    'app.fish'
 ]);

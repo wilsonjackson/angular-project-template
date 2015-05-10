@@ -1,22 +1,22 @@
 /**
- * @fileoverview Defines a task to lint js sources.
+ * @fileoverview Defines a task to lint TypeScript sources.
  */
 
 'use strict';
 
 var gulp = require('gulp');
 var path = require('path');
-var jshint = require('gulp-jshint');
+var tslint = require('gulp-tslint');
 
 module.exports = function (config) {
     /**
-     * Lints all js in `src`, including tests.
+     * Lints all TypeScript in `src`, including tests.
      *
      * @return {stream.Readable}
      */
     return function () {
-        return gulp.src(path.join(config.paths.src, config.filePatterns.js.all))
-            .pipe(jshint())
-            .pipe(jshint.reporter('default'));
+        return gulp.src(path.join(config.paths.src, config.filePatterns.ts.all))
+            .pipe(tslint())
+            .pipe(tslint.report('prose'));
     };
 };

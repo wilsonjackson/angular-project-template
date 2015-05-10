@@ -31,6 +31,13 @@ var config = {
         // The module that templates should be cached in.
         templateCacheModule: 'app.templates',
         basedir: __dirname,
+        // Options for the TypeScript compiler.
+        tscOptions: {
+            target: 'ES5',
+            sortOutput: true,
+            // This is for gulp-typescript, it provides the version of the compiler to use.
+            typescript: require('typescript')
+        },
         // Extra dependencies (besides automatic ones) to be included by the development server.
         devDependencies: [
             'node_modules/angular-mocks/angular-mocks.js'
@@ -68,6 +75,8 @@ var config = {
         // Main application source root. All asset types are mixed together in src, and are differentiated at build
         // time using the file patterns below.
         src: 'src',
+        // Typing definitions (from DefinitelyTyped) for external libraries.
+        typings: 'typings',
         // Dev-only source root. See dev task definition for details on how this is used.
         dev: 'dev',
         // Parent directory for build artifacts.
@@ -89,13 +98,10 @@ var config = {
             // Includes the main index file and all Angular templates.
             all: '**/*.html'
         },
-        js: {
-            all: '**/*.js',
-            src: '**/!(*-spec).js',
-            // Sub-patterns for sorting files into the correct load order.
-            sorted: ['**/app.js', '**/dev.js', '**/*.module.js', '**/*.js'],
-            // These files will be used to wrap concatenated javascript at build time.
-            fileWrapper: 'file-wrapper.txt',
+        ts: {
+            all: '**/*.ts',
+            src: '**/!(*-spec).ts',
+            // This file will be used to wrap concatenated javascript at build time.
             appWrapper: 'app-wrapper.txt'
         },
         css: {
