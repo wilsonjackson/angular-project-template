@@ -8,12 +8,13 @@ var gulp = require('gulp');
 var sourcemaps = require('gulp-sourcemaps');
 var concat = require('gulp-concat');
 var addStream = require('add-stream');
-var connect = require('gulp-connect');
+var _ = require('lodash');
+var conn = require('connect');
+var serveStatic = require('serve-static');
 var pipeline = require('connect-resource-pipeline');
 var htmlAssets = require('../streams/html-assets.js');
 var jsAssets = require('../streams/js-assets.js');
 var cssAssets = require('../streams/css-assets.js');
-var _ = require('lodash');
 
 module.exports = function (config) {
     /**
@@ -31,41 +32,44 @@ module.exports = function (config) {
      * development purposes.
      */
     return function () {
-        //noinspection JSUnusedGlobalSymbols
-        connect.server({
-            root: config.paths.src,
-            port: config.server.devPort,
-            middleware: function (connect) {
-                var html = htmlAssets(config);
-                var js = jsAssets(config);
-                var css = cssAssets(config);
+        var app = conn();
+        var html = htmlAssets(config);
+        var js = jsAssets(config);
+        var css = cssAssets(config);
 
-                return [
-                    connect().use(pipeline([
-                        {url: '/' + config.outputFiles.app.index, pipeline: function () {
-                            return html.getIndexFileStream();
-                        }},
-                        {url: '/' + config.outputFiles.app.js, pipeline: function () {
-                            return js.getDevAssetStream()
-                                .pipe(sourcemaps.write());
-                        }},
-                        {url: '/' + config.outputFiles.app.css, pipeline: function () {
-                            return css.getAssetStream()
-                                .pipe(sourcemaps.write());
-                        }},
-                        {url: '/' + config.outputFiles.deps.js, pipeline: function () {
-                            return js.getDepsAssetStream()
-                                .pipe(addStream.obj(gulp.src(config.project.devDependencies)));
-                        }},
-                        {url: '/' + config.outputFiles.deps.css, pipeline: function () {
-                            return css.getDepsAssetStream();
-                        }}
-                    ])),
-                    connect().use(connect.static('dev'))
-                ].concat(_.map(config.project.urlMappings, function (dir, url) {
-                        return connect().use(url, connect.static(dir));
-                    }));
-            }
+        app.use(pipeline([
+            {url: '/' + config.outputFiles.app.index, pipeline: function () {
+                return html.getIndexFileStream();
+            }},
+            {url: '/' + config.outputFiles.app.js, pipeline: function () {
+                return js.getDevAssetStream()
+                    .pipe(sourcemaps.write());
+            }},
+            {url: '/' + config.outputFiles.app.css, pipeline: function () {
+                return css.getAssetStream()
+                    .pipe(sourcemaps.write());
+            }},
+            {url: '/' + config.outputFiles.deps.js, pipeline: function () {
+                return js.getDepsAssetStream()
+                    .pipe(addStream.obj(gulp.src(config.project.devDependencies)))
+                    .pipe(sourcemaps.init({loadMaps: true}))
+                    .pipe(concat(config.outputFiles.deps.js))
+                    .pipe(sourcemaps.write());
+            }},
+            {url: '/' + config.outputFiles.deps.css, pipeline: function () {
+                return css.getDepsAssetStream()
+                    .pipe(sourcemaps.init({loadMaps: true}))
+                    .pipe(concat(config.outputFiles.deps.js))
+                    .pipe(sourcemaps.write());
+            }}
+        ]));
+
+        app.use(serveStatic('dev'));
+
+        _.each(config.project.urlMappings, function (dir, url) {
+            app.use(url, serveStatic(dir));
         });
+
+        app.listen(config.server.devPort);
     };
 };

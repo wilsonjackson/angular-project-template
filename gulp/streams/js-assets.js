@@ -24,17 +24,33 @@ module.exports = function (config) {
     //noinspection JSUnresolvedFunction
     var appWrapper = fs.readFileSync(path.join(config.paths.src, config.filePatterns.js.appWrapper)).toString();
 
-    // Main application source bundle builder, used by both getAssetStream and getDevAssetStream.
-    function sources() {
-        return gulp.src(path.join(config.paths.src, config.filePatterns.js.src))
+    /**
+     * Main application source bundle builder, used by both getAssetStream and getDevAssetStream.
+     *
+     * @return {stream.Readable}
+     */
+    function processSrc(sourceDirs, options) {
+        options = options || {};
+
+        // `base` is used to locate the concat destination file in the correct base dir for
+        // sourcemaps to resolve properly.
+        var base = options.base || config.paths.src;
+        var sources = sourceDirs.map(function (dir) {
+            return path.join(dir, config.filePatterns.js.src);
+        });
+
+        return gulp.src(sources)
             .pipe(order(config.filePatterns.js.sorted))
             .pipe(sourcemaps.init())
             .pipe(wrap(fileWrapper))
-            .pipe(ngAnnotate())
+            .pipe(ngAnnotate({gulpWarnings: false}))
             // Append the html assets (transformed into js) after the js assets
             .pipe(addStream.obj(htmlAssets(config).getTemplateAssetStream()
                 .pipe(ngTplCache({module: config.project.templateCacheModule, standalone: true}))
-                .pipe(sourcemaps.init())));
+                .pipe(sourcemaps.init())))
+            .pipe(concat({path: path.join(base, config.outputFiles.app.js), base: base, cwd: ''}))
+            .pipe(wrap(appWrapper))
+            .pipe(uglify());
     }
 
     return {
@@ -46,10 +62,7 @@ module.exports = function (config) {
          * @return {stream.Readable}
          */
         getAssetStream: function () {
-            return sources()
-                .pipe(concat({path: config.outputFiles.app.js, cwd: ''}))
-                .pipe(wrap(appWrapper))
-                .pipe(uglify());
+            return processSrc([config.paths.src]);
         },
 
         /**
@@ -61,15 +74,7 @@ module.exports = function (config) {
          * @return {stream.Readable}
          */
         getDevAssetStream: function () {
-            return sources()
-                .pipe(addStream.obj(gulp.src(path.join(config.paths.dev, config.filePatterns.js.all))
-                    .pipe(order(config.filePatterns.js.sorted))
-                    .pipe(sourcemaps.init())
-                    .pipe(wrap(fileWrapper))
-                    .pipe(ngAnnotate())))
-                .pipe(concat({path: config.outputFiles.app.js, cwd: ''}))
-                .pipe(wrap(appWrapper))
-                .pipe(uglify());
+            return processSrc([config.paths.src, config.paths.dev], {base: '.'});
         },
 
         /**

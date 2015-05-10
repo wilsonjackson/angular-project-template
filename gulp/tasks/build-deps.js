@@ -8,6 +8,7 @@ var gulp = require('gulp');
 var es = require('event-stream');
 var concat = require('gulp-concat');
 var rev = require('gulp-rev');
+var sourcemaps = require('gulp-sourcemaps');
 var jsAssets = require('../streams/js-assets');
 var cssAssets = require('../streams/css-assets');
 
@@ -25,10 +26,13 @@ module.exports = function (config) {
     return function () {
         return es.merge(
             jsAssets(config).getDepsAssetStream()
+                .pipe(sourcemaps.init({loadMaps: true}))
                 .pipe(concat(config.outputFiles.deps.js)),
             cssAssets(config).getDepsAssetStream()
+                .pipe(sourcemaps.init({loadMaps: true}))
                 .pipe(concat(config.outputFiles.deps.css)))
             .pipe(rev())
+            .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(config.paths.dist))
             .pipe(rev.manifest({path: config.outputFiles.deps.rev}))
             .pipe(gulp.dest(config.paths.rev));

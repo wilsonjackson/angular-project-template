@@ -4,7 +4,8 @@
 
 'use strict';
 
-var connect = require('gulp-connect');
+var connect = require('connect');
+var serveStatic = require('serve-static');
 
 module.exports = function (config) {
     /**
@@ -13,9 +14,8 @@ module.exports = function (config) {
      * This is useful for testing production assets.
      */
     return function () {
-        connect.server({
-            root: config.paths.dist,
-            port: config.server.port
-        });
+        var app = connect();
+        app.use(serveStatic(config.paths.dist));
+        app.listen(config.server.port);
     };
 };
