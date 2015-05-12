@@ -43,7 +43,7 @@
     "karma-jasmine": "~0.3.5",
     "karma-phantomjs-launcher": "~0.1.4",
     "karma-source-map-support": "~1.0.0",
-    "karma-vinyl-streams": "~0.1.0",
+    "karma-vinyl-streams": "~0.1.2",
     "polyfill-function-prototype-bind": "~0.0.1",
     "run-sequence": "~1.1.0",
     "serve-static": "~1.9.2",

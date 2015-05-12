@@ -46,20 +46,18 @@ module.exports = function (config) {
         browsers: ['PhantomJS'],
 
         vinylStreams: function (src, dest) {
-            src(build.config.filePatterns.js.all)
+            src.modified(build.config.filePatterns.js.all)
                 .pipe(sourcemaps.init())
                 .pipe(wrap(fileWrapper))
                 .pipe(sourcemaps.write({sourceRoot: __dirname}))
                 .pipe(dest());
 
-            // TODO (Majid) use .modified when fixed for first run
-            src(build.config.filePatterns.html.all)
+            src.modified(build.config.filePatterns.html.all)
                 .pipe(ngTplCache({module: build.config.project.templateCacheModule, standalone: true}))
                 .pipe(rename({extname: '.js'}))
                 .pipe(dest());
 
-            // TODO (Majid) use .modified when fixed for first run
-            src(libraries)
+            src.modified(libraries)
                 .pipe(sourcemaps.init({loadMaps: true}))
                 .pipe(sourcemaps.write({sourceRoot: __dirname}))
                 .pipe(dest());
