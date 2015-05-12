@@ -4,6 +4,7 @@
 
 'use strict';
 
+var path = require('path');
 var gulp = require('gulp');
 var sourcemaps = require('gulp-sourcemaps');
 var concat = require('gulp-concat');
@@ -32,38 +33,55 @@ module.exports = function (config) {
      * development purposes.
      */
     return function () {
-        var app = conn();
         var html = htmlAssets(config);
         var js = jsAssets(config);
         var css = cssAssets(config);
 
-        app.use(pipeline([
-            {url: '/' + config.outputFiles.app.index, pipeline: function () {
+        var assetPipeline = pipeline([
+            {url: '/' + config.outputFiles.app.index, cache: 'index', pipeline: function () {
                 return html.getIndexFileStream();
             }},
-            {url: '/' + config.outputFiles.app.js, pipeline: function () {
+            {url: '/' + config.outputFiles.app.js, cache: 'js', pipeline: function () {
                 return js.getDevAssetStream()
                     .pipe(sourcemaps.write());
             }},
-            {url: '/' + config.outputFiles.app.css, pipeline: function () {
+            {url: '/' + config.outputFiles.app.css, cache: 'css', pipeline: function () {
                 return css.getAssetStream()
                     .pipe(sourcemaps.write());
             }},
-            {url: '/' + config.outputFiles.deps.js, pipeline: function () {
+            {url: '/' + config.outputFiles.deps.js, cache: true, pipeline: function () {
                 return js.getDepsAssetStream()
                     .pipe(addStream.obj(gulp.src(config.project.devDependencies)))
                     .pipe(sourcemaps.init({loadMaps: true}))
                     .pipe(concat(config.outputFiles.deps.js))
                     .pipe(sourcemaps.write());
             }},
-            {url: '/' + config.outputFiles.deps.css, pipeline: function () {
+            {url: '/' + config.outputFiles.deps.css, cache: true, pipeline: function () {
                 return css.getDepsAssetStream()
                     .pipe(sourcemaps.init({loadMaps: true}))
                     .pipe(concat(config.outputFiles.deps.js))
                     .pipe(sourcemaps.write());
             }}
-        ]));
+        ]);
 
+        function clearCache(key) {
+            return function () {
+                assetPipeline.clear(key);
+            };
+        }
+
+        // Watch sources and clear caches when contents change.
+        // Note: deps are not watched, so a change of deps requires a server restart.
+        gulp.watch(path.join(config.paths.src, config.outputFiles.app.index), clearCache('index'));
+        gulp.watch([
+            path.join(config.paths.src, config.filePatterns.js.src),
+            path.join(config.paths.dev, config.filePatterns.js.src),
+            path.join(config.paths.src, config.filePatterns.html.all)
+        ], clearCache('js'));
+        gulp.watch(path.join(config.paths.src, config.filePatterns.less.all), clearCache('css'));
+
+        var app = conn();
+        app.use(assetPipeline);
         app.use(serveStatic('dev'));
 
         _.each(config.project.urlMappings, function (dir, url) {
