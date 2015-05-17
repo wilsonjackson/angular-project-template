@@ -74,8 +74,8 @@ module.exports = function (config) {
         // Note: deps are not watched, so a change of deps requires a server restart.
         gulp.watch(path.join(config.paths.src, config.outputFiles.app.index), clearCache('index'));
         gulp.watch([
-            path.join(config.paths.src, config.filePatterns.js.src),
-            path.join(config.paths.dev, config.filePatterns.js.src),
+            path.join(config.paths.src, config.filePatterns.ts.src),
+            path.join(config.paths.dev, config.filePatterns.ts.src),
             path.join(config.paths.src, config.filePatterns.html.all)
         ], clearCache('js'));
         gulp.watch(path.join(config.paths.src, config.filePatterns.less.all), clearCache('css'));
