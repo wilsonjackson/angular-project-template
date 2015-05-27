@@ -104,7 +104,7 @@ var config = {
         less: {
             all: '**/*.less',
             // Excludes are files that are manually @imported from other less files.
-            excludes: '**/less/*.less'
+            excludes: '**/less-imports/**/*.less'
         },
         rev: {
             all: '**/*.json'
