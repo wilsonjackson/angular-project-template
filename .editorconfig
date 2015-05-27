@@ -10,12 +10,12 @@ insert_final_newline = true
 charset = utf-8
 
 # 4 space indentation
-[*.js,*.ts]
+[*.{js,ts}]
 indent_style = space
 indent_size = 4
 
 # 2 space indentation
-[*.html,.less]
+[*.{html,less}]
 indent_style = space
 indent_size = 2
 
