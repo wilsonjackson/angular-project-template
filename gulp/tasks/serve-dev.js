@@ -82,7 +82,8 @@ module.exports = function (config) {
 
         var app = conn();
         app.use(assetPipeline);
-        app.use(serveStatic('dev'));
+        app.use(serveStatic(config.paths.src));
+        app.use(serveStatic(config.paths.dev));
 
         _.each(config.project.urlMappings, function (dir, url) {
             app.use(url, serveStatic(dir));
