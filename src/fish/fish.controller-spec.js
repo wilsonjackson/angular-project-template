@@ -4,7 +4,7 @@ describe('Test', function () {
     var $controller;
     var $rootScope;
 
-    beforeEach(module('app'));
+    beforeEach(module('fish'));
 
     beforeEach(inject(function (_$controller_, _$rootScope_) {
         $controller = _$controller_;
@@ -13,7 +13,7 @@ describe('Test', function () {
 
     it('should do stuff', function () {
         $controller('Fish', {$scope: $rootScope});
-        expect($rootScope.fish).not.toContain('Carp');
-        expect($rootScope.fish).toContain('Trout');
+        expect($rootScope.fish).not.to.contain('Carp');
+        expect($rootScope.fish).to.contain('Trout');
     });
 });
