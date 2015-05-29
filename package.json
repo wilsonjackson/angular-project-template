@@ -38,14 +38,15 @@
     "gulp-typescript": "^2.7.5",
     "gulp-uglify": "^1.2.0",
     "gulp-wrap-js": "^0.2.1",
-    "karma": "^0.12.33",
+    "karma": "^0.12.35",
     "karma-chai-sinon": "^0.1.5",
     "karma-chrome-launcher": "^0.1.10",
     "karma-mocha": "^0.1.10",
-    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-phantomjs-launcher": "^0.2.0",
     "karma-source-map-support": "^1.0.0",
     "karma-vinyl-streams": "^0.1.2",
     "mocha": "^2.2.5",
+    "phantomjs": "^1.9.17",
     "polyfill-function-prototype-bind": "^0.0.1",
     "run-sequence": "^1.1.0",
     "serve-static": "^1.9.2",
@@ -53,13 +54,13 @@
     "sinon-chai": "^2.7.0",
     "typescript": "~1.5.0-beta",
     "vinyl": "^0.4.6",
-    "yargs": "^3.9.1"
+    "yargs": "^3.10.0"
   },
   "dependencies": {
     "angular": "^1.4.0",
     "angular-animate": "^1.4.0",
     "angular-aria": "^1.4.0",
-    "angular-ui-router": "^0.2.14",
+    "angular-ui-router": "^0.2.15",
     "bootstrap": "^3.3.4",
     "lodash": "^2.4.2"
   },
@@ -76,8 +77,8 @@
     "angular-animate": {
       "main": "./node_modules/angular-animate/angular-animate.min.js"
     },
-    "angular-resource": {
-      "main": "./node_modules/angular-resource/angular-resource.min.js"
+    "angular-aria": {
+      "main": "./node_modules/angular-aria/angular-aria.min.js"
     },
     "angular-ui-router": {
       "main": "./node_modules/angular-ui-router/release/angular-ui-router.min.js",
