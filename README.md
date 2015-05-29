@@ -8,6 +8,7 @@ The following tools are required:
 
 1. [nodejs/npm](http://nodejs.org/download/)
 2. [gulpjs (globally installed)](https://github.com/gulpjs/gulp/blob/master/docs/getting-started.md#getting-started)
+3. [tsd (globally installed)](https://github.com/DefinitelyTyped/tsd#install)
 
 ### Creating a project
 
@@ -21,6 +22,7 @@ Remember to replace _`projectname`_ with the name of your project.
 
 ```
 npm install
+tsd reinstall
 ```
 
 ### Running the test suite
