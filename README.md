@@ -12,7 +12,7 @@ The following tools are required:
 ### Creating a project
 
 ```
-curl -L https://github.com/wilsonjackson/angular-project-template/archive/master.tar.gz | tar xz && mv angular-project-template-master projectname
+curl -L https://github.com/wilsonjackson/angular-project-template/archive/typescript.tar.gz | tar xz && mv angular-project-template-typescript projectname
 ```
 
 Remember to replace _`projectname`_ with the name of your project.
