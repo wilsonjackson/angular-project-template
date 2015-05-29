@@ -1,10 +1,11 @@
 describe('Test', () => {
     'use strict';
 
+describe('Test', function () {
     var $controller;
     var $rootScope;
 
-    beforeEach(module('app'));
+    beforeEach(module('fish'));
 
     beforeEach(inject((_$controller_, _$rootScope_) => {
         $controller = _$controller_;
@@ -14,8 +15,8 @@ describe('Test', () => {
     it('should do stuff', () => {
         $controller('Fish', {$scope: $rootScope});
 
-        expect($rootScope.fish).not.toContain('Carp');
+        expect($rootScope.fish).not.to.contain('Carp');
 
-        expect($rootScope.fish).toContain('Trout!??');
+        expect($rootScope.fish).to.contain('Trout!??');
     });
 });
