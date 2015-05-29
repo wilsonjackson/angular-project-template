@@ -1,11 +1,12 @@
+declare var expect: Chai.ExpectStatic;
+
 describe('Test', () => {
     'use strict';
 
-describe('Test', function () {
     var $controller;
     var $rootScope;
 
-    beforeEach(module('fish'));
+    beforeEach(module('app.fish'));
 
     beforeEach(inject((_$controller_, _$rootScope_) => {
         $controller = _$controller_;
