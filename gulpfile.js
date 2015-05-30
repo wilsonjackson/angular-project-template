@@ -145,6 +145,8 @@ gulp.task('lint', requireTask('lint'));
 gulp.task('serve', requireTask('serve'));
 gulp.task('serve-dev', requireTask('serve-dev'));
 gulp.task('test', requireTask('test'));
+gulp.task('e2e', requireTask('e2e'));
+gulp.task('e2e-update', requireTask('e2e').update);
 
 function requireTask(name) {
     var extraArgs = Array.prototype.slice.call(arguments, 1);

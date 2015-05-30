@@ -18,17 +18,22 @@
     "trailing": true,
     "smarttabs": true,
     "globals": {
-        "angular": false,
         "_": true,
-        "jasmine": false,
+
+        "angular": false,
+        "module": false,
+        "inject": false,
         "spyOn": false,
+
         "describe": false,
         "it": false,
         "beforeEach": false,
         "afterEach": false,
-        "expect": false,
-        "sinon": false,
-        "module": false,
-        "inject": false
+        "expect": true,
+        "sinon": true,
+
+        "browser": false,
+        "element": false,
+        "by": false
     }
 }
