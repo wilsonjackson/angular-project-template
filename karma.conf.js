@@ -52,7 +52,7 @@ module.exports = function (config) {
                 .pipe(sourcemaps.write({sourceRoot: __dirname}))
                 .pipe(dest());
 
-            src.modified(build.config.filePatterns.html.all)
+            src(build.config.filePatterns.html.all)
                 .pipe(ngTplCache({module: build.config.project.templateCacheModule, standalone: true}))
                 .pipe(rename({extname: '.js'}))
                 .pipe(dest());
